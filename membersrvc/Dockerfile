@@ -1,0 +1,3 @@
+FROM hyperledger/fabric-membersrvc:x86_64-0.6.1-preview
+
+COPY membersrvc.yaml ./membersrvc

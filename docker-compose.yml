@@ -1,0 +1,159 @@
+version: "2"
+services:
+
+  eureka:
+    image: magg/eureka-fail
+
+    ports:
+      - "8761:8761"
+    container_name: eureka
+    networks:
+      - net
+
+  membersrvc:
+    image: magg/membership
+
+    command: membersrvc
+    ports:
+      - "7054:7054"
+    cap_add:
+      - NET_ADMIN
+    container_name: membersrvc
+    networks:
+      - net
+
+  vp0:
+    image: magg/peer-fail
+
+    extends:
+      file: base/base-grid.yaml
+      service: peer-secure-pbft-base
+    environment:
+      - CORE_PEER_ID=vp0
+      - CORE_SECURITY_ENROLLID=test_vp0
+      - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT
+      - CORE_VM_ENDPOINT=vp0:2376
+    links:
+      - membersrvc
+    container_name: vp0
+    depends_on:
+      - membersrvc
+      - eureka
+    networks:
+      - net
+
+  vp1:
+    image: magg/peer-fail
+
+    extends:
+      file: base/base-grid.yaml
+      service: peer-secure-pbft-base
+    environment:
+      - CORE_PEER_DISCOVERY_ROOTNODE=vp0:7051
+      - CORE_PEER_ID=vp1
+      - CORE_SECURITY_ENROLLID=test_vp1
+      - CORE_SECURITY_ENROLLSECRET=5wgHK9qqYaPy
+      - CORE_VM_ENDPOINT=vp1:2376
+    links:
+      - membersrvc
+      - vp0
+    container_name: vp1
+    depends_on:
+      - vp0
+      - membersrvc
+      - eureka
+    networks:
+      - net
+
+
+  vp2:
+    image: magg/peer-fail
+
+    extends:
+      file: base/base-grid.yaml
+      service: peer-secure-pbft-base
+    environment:
+      - CORE_PEER_DISCOVERY_ROOTNODE=vp0:7051
+      - CORE_PEER_ID=vp2
+      - CORE_SECURITY_ENROLLID=test_vp2
+      - CORE_SECURITY_ENROLLSECRET=vQelbRvja7cJ
+      - CORE_VM_ENDPOINT=vp2:2376
+    links:
+      - membersrvc
+      - vp0
+    container_name: vp2
+    depends_on:
+      - vp0
+      - membersrvc
+      - eureka
+    networks:
+      - net
+
+  vp3:
+    image: magg/peer-fail
+
+    extends:
+      file: base/base-grid.yaml
+      service: peer-secure-pbft-base
+    environment:
+      - CORE_PEER_DISCOVERY_ROOTNODE=vp0:7051
+      - CORE_PEER_ID=vp3
+      - CORE_SECURITY_ENROLLID=test_vp3
+      - CORE_SECURITY_ENROLLSECRET=9LKqKH5peurL
+      - CORE_VM_ENDPOINT=vp3:2376
+    links:
+      - membersrvc
+      - vp0
+    container_name: vp3
+    depends_on:
+      - vp0
+      - membersrvc
+      - eureka
+    networks:
+      - net
+
+
+  # blockchain-explorer
+  explorer:
+    extends:
+      file: explorer.yml
+      service: explorer
+    hostname: explorer
+    container_name: explorer
+    environment:
+      - HYP_REST_ENDPOINT=http://vp0:7050
+    ports:
+      - "9090:9090"
+    depends_on:
+      - vp0
+      - membersrvc
+    networks:
+      - net
+
+  demo:
+    image: magg/demo-node
+
+    links:
+      - vp0
+      - membersrvc
+    depends_on:
+      - vp0
+      - membersrvc
+    ports:
+      - "8080:8080"
+    cap_add:
+      - NET_ADMIN
+    container_name: demo
+    networks:
+      - net
+
+
+#networks:
+#  default:
+#    external:
+#      name: fabric_pbft
+
+
+networks:
+  net:
+    driver: overlay
