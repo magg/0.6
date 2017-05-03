@@ -130,22 +130,22 @@ services:
     networks:
       - net
 
-  demo:
-    image: magg/demo-node
+ # demo:
+ #   image: magg/demo-node
 
-    links:
-      - vp0
-      - membersrvc
-    depends_on:
-      - vp0
-      - membersrvc
-    ports:
-      - "8080:8080"
-    cap_add:
-      - NET_ADMIN
-    container_name: demo
-    networks:
-      - net
+  #  links:
+   #   - vp0
+    #  - membersrvc
+   # depends_on:
+    #  - vp0
+    #  - membersrvc
+    #ports:
+    #  - "8080:8080"
+    #cap_add:
+    #  - NET_ADMIN
+    #container_name: demo
+    #networks:
+    #  - net
 
 
 #networks:
