@@ -40,8 +40,8 @@ docker-g5k create-cluster --g5k-username "mgonzalez" \
     --engine-opt "$site-{0..$N}:default-ulimit=nofile=8192:16384" --engine-opt "$site-{0..$N}:default-ulimit=nproc=8192:16384" --engine-opt "$site-{0..$N}:api-cors-header='*'" \
     --swarm-master "$site-0" \
     --g5k-image "ubuntu1404-x64-min" \
-    --engine-opt "$site-{0..$N}:host=tcp://0.0.0.0:2375" --engine-opt "$site-{0..$N}:host=tcp://0.0.0.0:3376" --swarm-standalone-opt "tlsverify=false" \
-    --swarm-standalone-opt "tls=true"
+    --engine-opt "$site-{0..$N}:host=tcp://0.0.0.0:2375" --engine-opt "$site-{0..$N}:host=tcp://0.0.0.0:3376" \
+    #--swarm-standalone-opt "tlsverify=false" --swarm-standalone-opt "tls=true" 
 
 docker-machine ls
 
@@ -61,7 +61,7 @@ docker pull hyperledger/fabric-peer:x86_64-0.6.1-preview \
 
 for (( i=0; i<=$N; i++ ))
 do
-  docker-machine ssh $site-$i "sed -i '/tls/d' /etc/default/docker"
+  #docker-machine ssh $site-$i "sed -i '/tls/d' /etc/default/docker"
  docker-machine ssh $site-$i "sed -ie 's/--host=/-H /g' /etc/default/docker"
  docker-machine ssh $site-$i "sudo service docker restart"
   sleep 5
