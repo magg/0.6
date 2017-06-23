@@ -1,8 +1,0 @@
-#!/bin/bash
-
-export G5K_USERNAME="mgonzalez"
-export G5K_PASSWORD="***REMOVED***"
-export G5K_SITE="lyon"
-export G5K_WALLTIME="5:00:00"
-export G5K_IMAGE="ubuntu1404-x64-min"
-#export G5K_SKIP_VPN_CHECKS=False
